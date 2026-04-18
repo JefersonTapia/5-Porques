@@ -247,7 +247,7 @@
             <div class="row g-3">
                 <div class="col-md-3"><label class="fw-bold">📅 Fecha</label><input type="date" class="form-control" id="fechaReporte" value="2025-04-15"></div>
                 <div class="col-md-3"><label class="fw-bold">🏢 Área</label><input type="text" class="form-control" id="area" placeholder="Ej: Operaciones"></div>
-                <div class="col-md-3"><label class="fw-bold">👤 Analista</label><input type="text" class="form-control" id="analista" placeholder="Nombre" value="Jeferson_QT"></div>
+                <div class="col-md-3"><label class="fw-bold">👤 Analista</label><input type="text" class="form-control" id="analista" placeholder="Nombre"></div>
                 <div class="col-md-3"><label class="fw-bold">📍 Ubicación</label><input type="text" class="form-control" id="ubicacion" placeholder="Lugar"></div>
             </div>
         </div>
