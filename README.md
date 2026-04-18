@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>5 Porqués - Análisis de Causa Raíz</title>
+    
+    <!-- Bootstrap 5 CDN (corregido) -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <!-- Librerías para PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+    
+    <style>
+        :root {
+            --primary-color: #1e3c72;
+            --secondary-color: #2a5298;
+            --accent-color: #e67e22;
+            --light-bg: #f8fafc;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            padding-bottom: 2rem;
+        }
+
+        .header-cinco {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 1.8rem 0;
+            margin-bottom: 2rem;
+            border-bottom: 4px solid var(--accent-color);
+        }
+
+        .header-cinco h1 {
+            font-weight: 700;
+            font-size: 2.2rem;
+        }
+
+        .info-card {
+            background: white;
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border-left: 6px solid var(--primary-color);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        .porque-container {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        .porque-titulo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 3px solid var(--accent-color);
+            display: inline-block;
+        }
+
+        .porque-card {
+            background: var(--light-bg);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid #e2e8f0;
+        }
+
+        .porque-nivel {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border-radius: 50%;
+            font-weight: 800;
+            font-size: 1.4rem;
+            margin-bottom: 1rem;
+        }
+
+        .porque-pregunta {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .porque-pregunta i {
+            color: var(--accent-color);
+            margin-right: 8px;
+        }
+
+        .porque-respuesta {
+            width: 100%;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 1rem;
+            font-size: 1rem;
+            background: white;
+        }
+
+        .causa-raiz-card {
+            background: linear-gradient(135deg, #fef9e6, #fff6e0);
+            border-radius: 20px;
+            padding: 1.8rem;
+            margin-top: 1.5rem;
+            border: 2px solid var(--accent-color);
+            position: relative;
+        }
+
+        .causa-raiz-card::before {
+            content: "⚡";
+            position: absolute;
+            top: -15px;
+            left: 20px;
+            background: var(--accent-color);
+            color: white;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .causa-raiz-label {
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: var(--accent-color);
+            margin-bottom: 0.8rem;
+        }
+
+        .causa-raiz-texto {
+            font-size: 1.2rem;
+            font-weight: 500;
+            color: #2c3e50;
+            background: white;
+            padding: 1rem;
+            border-radius: 12px;
+            border-left: 5px solid var(--accent-color);
+        }
+
+        .btn-pdf {
+            background: linear-gradient(135deg, #dc3545, #c82333);
+            color: white;
+            border: none;
+            padding: 1rem 2.5rem;
+            font-size: 1.1rem;
+            font-weight: 700;
+            border-radius: 50px;
+            cursor: pointer;
+            margin: 1rem 0;
+            transition: transform 0.2s;
+        }
+
+        .btn-pdf:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-reset {
+            background: linear-gradient(135deg, #6c757d, #5a6268);
+            color: white;
+            border: none;
+            padding: 1rem 2.5rem;
+            font-size: 1.1rem;
+            font-weight: 700;
+            border-radius: 50px;
+            cursor: pointer;
+            margin: 1rem 0.5rem;
+        }
+
+        .footer {
+            background: white;
+            padding: 1.2rem;
+            border-radius: 50px;
+            text-align: center;
+            color: #6c757d;
+            margin-top: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            .btn-pdf, .btn-reset {
+                width: 100%;
+                margin: 0.5rem 0;
+            }
+        }
+        
+        /* Estilos para el contenido del PDF */
+        .pdf-contenido {
+            padding: 30px;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+        }
+        .pdf-contenido h1 { color: #1e3c72; text-align: center; font-size: 28px; margin-bottom: 5px; }
+        .pdf-contenido .subtitulo { text-align: center; color: #666; border-bottom: 2px solid #e67e22; padding-bottom: 10px; margin-bottom: 20px; }
+        .pdf-contenido .seccion-titulo { background: #1e3c72; color: white; padding: 8px 15px; border-radius: 5px; margin: 20px 0 10px; font-weight: bold; }
+        .pdf-contenido .info-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 10px; background: #f8f9fa; padding: 15px; border-radius: 8px; }
+        .pdf-contenido .problema-box { background: #f8f9fa; padding: 15px; border-radius: 8px; border-left: 5px solid #e67e22; }
+        .pdf-contenido table { width: 100%; border-collapse: collapse; margin: 10px 0; }
+        .pdf-contenido th { background: #2c3e50; color: white; padding: 10px; text-align: left; }
+        .pdf-contenido td { padding: 10px; border-bottom: 1px solid #ddd; }
+        .pdf-contenido .causa-box { background: #fff6e0; padding: 20px; border-radius: 10px; border-left: 5px solid #e67e22; margin: 15px 0; }
+        .pdf-contenido .firmas { display: flex; justify-content: space-between; margin-top: 40px; padding-top: 20px; border-top: 1px solid #ccc; }
+        .pdf-contenido .firma { text-align: center; width: 45%; }
+        .pdf-contenido .firma-linea { border-top: 1px solid #000; margin: 20px 0 5px; }
+    </style>
+</head>
+<body>
+
+    <div class="header-cinco">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h1><i class="fas fa-question-circle"></i> 5 Porqués</h1>
+                    <p>Metodología de Análisis de Causa Raíz - Investigación de Incidentes</p>
+                </div>
+                <div class="col-md-4 text-end">
+                    <span class="badge bg-light text-dark p-3 rounded-pill">5 WHYs</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="info-card">
+            <div class="row g-3">
+                <div class="col-md-3"><label class="fw-bold">📅 Fecha</label><input type="date" class="form-control" id="fechaReporte" value="2025-04-15"></div>
+                <div class="col-md-3"><label class="fw-bold">🏢 Área</label><input type="text" class="form-control" id="area" placeholder="Ej: Operaciones"></div>
+                <div class="col-md-3"><label class="fw-bold">👤 Analista</label><input type="text" class="form-control" id="analista" placeholder="Nombre" value="Jeferson_QT"></div>
+                <div class="col-md-3"><label class="fw-bold">📍 Ubicación</label><input type="text" class="form-control" id="ubicacion" placeholder="Lugar"></div>
+            </div>
+        </div>
+
+        <div class="porque-container">
+            <div class="porque-titulo"><i class="fas fa-exclamation-triangle me-2"></i> PROBLEMA PRINCIPAL</div>
+            <div class="mt-3"><input type="text" class="form-control form-control-lg" id="problemaPrincipal" value="Accidente en área de trabajo"></div>
+        </div>
+
+        <div class="porque-container">
+            <div class="porque-titulo"><i class="fas fa-question-circle me-2"></i> ANÁLISIS DE CAUSAS</div>
+            <p class="text-muted mb-4">Responda cada "¿Por qué?" secuencialmente hasta llegar a la causa raíz.</p>
+            
+            <div class="porque-card"><div class="porque-nivel">1</div><div class="porque-pregunta"><i class="fas fa-question"></i> ¿Por qué ocurrió el problema?</div><textarea class="porque-respuesta" id="porque1" rows="2" placeholder="Ej: Porque el trabajador resbaló..."></textarea></div>
+            <div class="porque-card"><div class="porque-nivel">2</div><div class="porque-pregunta"><i class="fas fa-question"></i> ¿Por qué ocurrió la causa anterior?</div><textarea class="porque-respuesta" id="porque2" rows="2" placeholder="Ej: Porque el piso estaba mojado..."></textarea></div>
+            <div class="porque-card"><div class="porque-nivel">3</div><div class="porque-pregunta"><i class="fas fa-question"></i> ¿Por qué ocurrió la causa anterior?</div><textarea class="porque-respuesta" id="porque3" rows="2" placeholder="Ej: Porque hubo una fuga de agua..."></textarea></div>
+            <div class="porque-card"><div class="porque-nivel">4</div><div class="porque-pregunta"><i class="fas fa-question"></i> ¿Por qué ocurrió la causa anterior?</div><textarea class="porque-respuesta" id="porque4" rows="2" placeholder="Ej: Porque la tubería estaba dañada..."></textarea></div>
+            <div class="porque-card"><div class="porque-nivel">5</div><div class="porque-pregunta"><i class="fas fa-question"></i> ¿Por qué ocurrió la causa anterior?</div><textarea class="porque-respuesta" id="porque5" rows="2" placeholder="Ej: Porque no se realizó mantenimiento preventivo..."></textarea></div>
+
+            <div class="causa-raiz-card"><div class="causa-raiz-label"><i class="fas fa-root me-2"></i> CAUSA RAÍZ IDENTIFICADA</div><div class="causa-raiz-texto" id="causaRaizTexto">La causa raíz se mostrará aquí...</div></div>
+
+            <div class="mt-4"><label class="fw-bold">✅ ACCIONES CORRECTIVAS</label><textarea class="form-control mt-2" id="accionesCorrectivas" rows="3" placeholder="Ej: Implementar programa de mantenimiento preventivo..."></textarea></div>
+            <div class="mt-3"><label class="fw-bold">📝 OBSERVACIONES</label><textarea class="form-control mt-2" id="observaciones" rows="2"></textarea></div>
+        </div>
+
+        <div class="text-center">
+            <button class="btn-pdf" onclick="generarPDF()"><i class="fas fa-file-pdf me-2"></i> GENERAR REPORTE PDF</button>
+            <button class="btn-reset" onclick="resetearTodo()"><i class="fas fa-undo-alt me-2"></i> REINICIAR TODO</button>
+        </div>
+
+        <div class="footer"><i class="fas fa-user-graduate me-2"></i> Analista: Jeferson_QT <i class="fas fa-envelope mx-3"></i> jeferson7316@hotmail.com</div>
+    </div>
+
+    <script>
+        function actualizarCausaRaiz() {
+            const porque5 = document.getElementById('porque5').value.trim();
+            const causaRaizDiv = document.getElementById('causaRaizTexto');
+            if (porque5) causaRaizDiv.innerHTML = porque5;
+            else {
+                const porque4 = document.getElementById('porque4').value.trim();
+                const porque3 = document.getElementById('porque3').value.trim();
+                const porque2 = document.getElementById('porque2').value.trim();
+                const porque1 = document.getElementById('porque1').value.trim();
+                if (porque4) causaRaizDiv.innerHTML = porque4;
+                else if (porque3) causaRaizDiv.innerHTML = porque3;
+                else if (porque2) causaRaizDiv.innerHTML = porque2;
+                else if (porque1) causaRaizDiv.innerHTML = porque1;
+                else causaRaizDiv.innerHTML = 'La causa raíz se mostrará aquí...';
+            }
+        }
+
+        document.querySelectorAll('#porque1, #porque2, #porque3, #porque4, #porque5').forEach(t => t.addEventListener('input', actualizarCausaRaiz));
+        
+        function resetearTodo() { 
+            if(confirm('¿Reiniciar todo? Esta acción borrará todos los datos ingresados.')) {
+                location.reload();
+            }
+        }
+
+        async function generarPDF() {
+            const btn = document.querySelector('.btn-pdf');
+            const textoOriginal = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i> GENERANDO PDF...';
+            btn.disabled = true;
+            
+            try {
+                const fecha = document.getElementById('fechaReporte').value || 'No especificada';
+                const area = document.getElementById('area').value || 'No especificada';
+                const analista = document.getElementById('analista').value || 'No especificado';
+                const ubicacion = document.getElementById('ubicacion').value || 'No especificada';
+                const problema = document.getElementById('problemaPrincipal').value || 'No especificado';
+                const porque1 = document.getElementById('porque1').value.trim() || 'No especificado';
+                const porque2 = document.getElementById('porque2').value.trim() || 'No especificado';
+                const porque3 = document.getElementById('porque3').value.trim() || 'No especificado';
+                const porque4 = document.getElementById('porque4').value.trim() || 'No especificado';
+                const porque5 = document.getElementById('porque5').value.trim() || 'No especificado';
+                const causaRaiz = document.getElementById('causaRaizTexto').innerText;
+                const acciones = document.getElementById('accionesCorrectivas').value.trim() || 'No especificadas';
+                const observaciones = document.getElementById('observaciones').value.trim() || 'Sin observaciones';
+                
+                const element = document.createElement('div');
+                element.className = 'pdf-contenido';
+                element.style.position = 'absolute';
+                element.style.left = '-9999px';
+                element.style.top = '0';
+                element.style.width = '800px';
+                element.style.background = 'white';
+                element.innerHTML = `
+                    <h1>5 PORQUÉS</h1>
+                    <div class="subtitulo">Análisis de Causa Raíz - Investigación de Incidentes</div>
+                    
+                    <div class="seccion-titulo">INFORMACIÓN DEL REPORTE</div>
+                    <div class="info-grid">
+                        <div><strong>Fecha:</strong> ${fecha}</div><div><strong>Área:</strong> ${area}</div>
+                        <div><strong>Analista:</strong> ${analista}</div><div><strong>Ubicación:</strong> ${ubicacion}</div>
+                    </div>
+                    
+                    <div class="seccion-titulo">PROBLEMA PRINCIPAL</div>
+                    <div class="problema-box"><strong>${problema}</strong></div>
+                    
+                    <div class="seccion-titulo">ANÁLISIS DE CAUSAS</div>
+                    <table>
+                        <thead>
+                            <tr><th>Nivel</th><th>Respuesta</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><strong>1° ¿POR QUÉ?</strong></td><td>${porque1.replace(/\n/g, '<br>')}</td></tr>
+                            <tr><td><strong>2° ¿POR QUÉ?</strong></td><td>${porque2.replace(/\n/g, '<br>')}</td></tr>
+                            <tr><td><strong>3° ¿POR QUÉ?</strong></td><td>${porque3.replace(/\n/g, '<br>')}</td></tr>
+                            <tr><td><strong>4° ¿POR QUÉ?</strong></td><td>${porque4.replace(/\n/g, '<br>')}</td></tr>
+                            <tr><td><strong>5° ¿POR QUÉ?</strong></td><td>${porque5.replace(/\n/g, '<br>')}</td></tr>
+                        </tbody>
+                    </table>
+                    
+                    <div class="causa-box"><h3 style="color:#e67e22; margin:0 0 10px 0;">⚡ CAUSA RAÍZ IDENTIFICADA</h3><p style="font-size:16px; font-weight:bold;">${causaRaiz}</p></div>
+                    
+                    <div class="seccion-titulo" style="background:#27ae60;">ACCIONES CORRECTIVAS</div>
+                    <div style="background:#f8f9fa; padding:15px; border-radius:8px;">${acciones.replace(/\n/g, '<br>')}</div>
+                    
+                    <div class="seccion-titulo" style="background:#f39c12;">OBSERVACIONES</div>
+                    <div style="background:#f8f9fa; padding:15px; border-radius:8px;">${observaciones.replace(/\n/g, '<br>')}</div>
+                    
+                    <div class="firmas">
+                        <div class="firma"><div class="firma-linea"></div><small>Elaborado por: ${analista}</small></div>
+                        <div class="firma"><div class="firma-linea"></div><small>Revisado por: _________________</small></div>
+                    </div>
+                    
+                    <div style="text-align:center; margin-top:30px; font-size:10px; color:#999;">Documento generado por Sistema 5 Porqués - ${new Date().toLocaleDateString()}</div>
+                `;
+                
+                document.body.appendChild(element);
+                
+                const canvas = await html2canvas(element, {
+                    scale: 2,
+                    backgroundColor: '#ffffff',
+                    logging: false,
+                    useCORS: true
+                });
+                
+                const { jsPDF } = window.jspdf;
+                const imgData = canvas.toDataURL('image/png');
+                const imgWidth = 210;
+                const pageHeight = 297;
+                const imgHeight = (canvas.height * imgWidth) / canvas.width;
+                let pdf = new jsPDF('p', 'mm', 'a4');
+                let position = 0;
+                
+                pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                
+                let heightLeft = imgHeight - pageHeight;
+                while (heightLeft > 0) {
+                    position = heightLeft - imgHeight;
+                    pdf.addPage();
+                    pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                    heightLeft -= pageHeight;
+                }
+                
+                pdf.save(`5_Porques_${new Date().toISOString().slice(0,10)}.pdf`);
+                document.body.removeChild(element);
+                
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error al generar el PDF. Por favor, intente nuevamente.');
+            } finally {
+                btn.innerHTML = textoOriginal;
+                btn.disabled = false;
+            }
+        }
+        
+        window.onload = actualizarCausaRaiz;
+    </script>
+</body>
+</html>
